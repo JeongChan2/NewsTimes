@@ -13,6 +13,7 @@ const menuList = [...menuList1, ...menuList2];
 
 menuList.forEach((menuButton) => {
   menuButton.addEventListener("click", () => {
+    document.getElementById("mySidenav").style.width = "0";
     let tmp = menuButton.textContent.toLowerCase();
     // RESULT_URL = DEPLOY_URL + "category=Entertainment";
     RESULT_URL = DEPLOY_URL + `category=${tmp}`;
