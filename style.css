@@ -34,6 +34,7 @@
 
 .news {
   border-bottom: 2px solid black;
+  padding: 1em 0;
 }
 
 .side-menu {
@@ -92,4 +93,10 @@ i.hide {
     .menus {
         display: none;
     }
+}
+
+.image-parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
