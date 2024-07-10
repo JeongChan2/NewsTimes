@@ -1,6 +1,7 @@
 const API_KEY = `3643515049634840bf9e22e9ef948e16`;
 const NUU_URL = `http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`;
-const DEPLOY_URL = `https://chan-news-times.netlify.app/top-headlines?`;
+const DEPLOY_URL2 = `https://chan-news-times.netlify.app/top-headlines?`;
+const DEPLOY_URL = `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?`;
 const TEST_URL = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`;
 const X_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png';
 
@@ -10,6 +11,22 @@ let newsList = [];
 const menuList1 = document.querySelectorAll(".side-menu-list button");
 const menuList2 = document.querySelectorAll(".menus button");
 const menuList = [...menuList1, ...menuList2];
+
+const searchInput = document.getElementById("search-input");
+
+const searchNews = () => {
+  
+  RESULT_URL = DEPLOY_URL + `q=${searchInput.value}`;
+  console.log(RESULT_URL)
+  getLatestNews();
+  
+}
+
+searchInput.addEventListener("keypress", (event) => {
+  if(event.key == "Enter"){
+    searchNews();
+  }
+})
 
 menuList.forEach((menuButton) => {
   menuButton.addEventListener("click", () => {
