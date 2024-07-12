@@ -57,13 +57,34 @@ const closeNav = () => {
 };
 
 const getLatestNews = async () => {
-  const url = new URL(`${RESULT_URL}`);
-  const response = await fetch(url);
-  const data = await response.json();
-  newsList = data.articles;
-  console.log("rrrr", newsList);
+  try{
+    const url = new URL(`${RESULT_URL}`);
+    const response = await fetch(url);
+    const data = await response.json();
 
-  render();
+    if(response.status === 200){
+      if(data.articles.length === 0){
+        throw new Error("No result for this search");
+      }
+      newsList = data.articles;
+      // console.log("rrrr", newsList);
+    } else {
+      throw new Error(data.message)
+    }
+    
+  
+    render();
+  } catch (error){
+    errorRender(error.message);
+  }
+  
+};
+
+const errorRender = (errorMessage) => {
+  const errorHTML = `<div class="alert alert-danger" role="alert">
+    ${errorMessage}
+  </div>`;
+  document.getElementById("news-board").innerHTML = errorHTML
 };
 
 const render = () => {
