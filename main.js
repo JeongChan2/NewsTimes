@@ -8,17 +8,22 @@ const X_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image
 let RESULT_URL = DEPLOY_URL;
 let newsList = [];
 
+let totalResults = 0;
+let page = 1;
+const pageSize = 10;
+const groupSize = 5;
+
 const menuList1 = document.querySelectorAll(".side-menu-list button");
 const menuList2 = document.querySelectorAll(".menus button");
 const menuList = [...menuList1, ...menuList2];
 
 const searchInput = document.getElementById("search-input");
 
-const searchNews = () => {
+const searchNews = async () => {
   
   RESULT_URL = DEPLOY_URL + `q=${searchInput.value}`;
   console.log(RESULT_URL)
-  getLatestNews();
+  await getLatestNews();
   
 }
 
@@ -29,13 +34,13 @@ searchInput.addEventListener("keypress", (event) => {
 })
 
 menuList.forEach((menuButton) => {
-  menuButton.addEventListener("click", () => {
+  menuButton.addEventListener("click", async () => {
     document.getElementById("mySidenav").style.width = "0";
     let tmp = menuButton.textContent.toLowerCase();
     // RESULT_URL = DEPLOY_URL + "category=Entertainment";
     RESULT_URL = DEPLOY_URL + `category=${tmp}`;
     console.log(RESULT_URL);
-    getLatestNews();
+    await getLatestNews();
   });
 });
 
@@ -59,6 +64,10 @@ const closeNav = () => {
 const getLatestNews = async () => {
   try{
     const url = new URL(`${RESULT_URL}`);
+
+    url.searchParams.set("page",page);
+    url.searchParams.set("pageSize",pageSize);
+
     const response = await fetch(url);
     const data = await response.json();
 
@@ -67,13 +76,15 @@ const getLatestNews = async () => {
         throw new Error("No result for this search");
       }
       newsList = data.articles;
+      totalResults = data.totalResults;
       // console.log("rrrr", newsList);
+      render();
+      paginationRender();
+
     } else {
       throw new Error(data.message)
     }
-    
-  
-    render();
+
   } catch (error){
     errorRender(error.message);
   }
@@ -122,5 +133,59 @@ const render = () => {
   }); // map으로 썼을땐 .join('')까지 해주기
   document.getElementById("news-board").innerHTML = result;
 };
+
+const paginationRender=() => {
+  // totalResult,
+  // page
+  // pageSize
+  // totalPages
+  const totalPages = Math.ceil(totalResults/pageSize);
+  // groupSize
+  // pageGroup
+  const pageGroup = Math.ceil(page/groupSize)
+  // lastPage
+  let lastPage = pageGroup * groupSize;
+  // 마지막 페이지그룹이 그룹사이즈보다 작다? lastPage = totalPage
+  if(lastPage > totalPages) {
+    lastPage = totalPages;
+  }
+
+  // firstPage
+  const firstPage = lastPage - (groupSize - 1)<=0?1:lastPage - (groupSize - 1);
+
+  let pagiNationHTML=`<li class="page-item ${page===1  || totalPages <= groupSize?"hide":""}" onclick="moveToPage(1)"><a class="page-link">&lt;&lt;</a></li>`;
+  pagiNationHTML+=`<li class="page-item ${page===1  || totalPages <= groupSize?"hide":""}" onclick="moveToPage(${page-1})"><a class="page-link">&lt;</a></li>`;
+
+  for(let i=firstPage;i<=lastPage;i++){
+    pagiNationHTML += `<li class="page-item ${i === page?"active":""}" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>`
+  }
+
+  pagiNationHTML += `<li class="page-item ${page+1>totalPages || totalPages <= groupSize?"hide":""}" onclick="moveToPage(${page+1})"><a class="page-link">&gt;</a></li>`;
+  pagiNationHTML += `<li class="page-item ${page+1>totalPages || totalPages <= groupSize?"hide":""}" onclick="moveToPage(${totalPages})"><a class="page-link">&gt;&gt;</a></li>`;
+  document.querySelector(".pagination").innerHTML=pagiNationHTML;
+
+//   <nav aria-label="Page navigation example">
+//   <ul class="pagination">
+//     <li class="page-item">
+//       <a class="page-link" href="#" aria-label="Previous">
+//         <span aria-hidden="true">&laquo;</span>
+//       </a>
+//     </li>
+//     <li class="page-item"><a class="page-link" href="#">1</a></li>
+//     <li class="page-item"><a class="page-link" href="#">2</a></li>
+//     <li class="page-item"><a class="page-link" href="#">3</a></li>
+//     <li class="page-item">
+//       <a class="page-link" href="#" aria-label="Next">
+//         <span aria-hidden="true">&raquo;</span>
+//       </a>
+//     </li>
+//   </ul>
+// </nav>
+}
+
+const moveToPage=(pageNum)=>{
+  page = pageNum;
+  getLatestNews();
+}
 
 getLatestNews();
