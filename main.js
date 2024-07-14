@@ -20,7 +20,7 @@ const menuList = [...menuList1, ...menuList2];
 const searchInput = document.getElementById("search-input");
 
 const searchNews = async () => {
-  
+  page = 1;
   RESULT_URL = DEPLOY_URL + `q=${searchInput.value}`;
   console.log(RESULT_URL)
   await getLatestNews();
