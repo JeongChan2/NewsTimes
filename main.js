@@ -20,6 +20,7 @@ const menuList = [...menuList1, ...menuList2];
 const searchInput = document.getElementById("search-input");
 
 const searchNews = async () => {
+
   page = 1;
   RESULT_URL = DEPLOY_URL + `q=${searchInput.value}`;
   console.log(RESULT_URL)
@@ -73,13 +74,16 @@ const getLatestNews = async () => {
 
     if(response.status === 200){
       if(data.articles.length === 0){
+        document.querySelector(".pagination").innerHTML=``;
         throw new Error("No result for this search");
       }
       newsList = data.articles;
       totalResults = data.totalResults;
       // console.log("rrrr", newsList);
       render();
+
       paginationRender();
+      
 
     } else {
       throw new Error(data.message)
