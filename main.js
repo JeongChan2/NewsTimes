@@ -36,6 +36,7 @@ searchInput.addEventListener("keypress", (event) => {
 
 menuList.forEach((menuButton) => {
   menuButton.addEventListener("click", async () => {
+    page = 1;
     document.getElementById("mySidenav").style.width = "0";
     let tmp = menuButton.textContent.toLowerCase();
     // RESULT_URL = DEPLOY_URL + "category=Entertainment";
